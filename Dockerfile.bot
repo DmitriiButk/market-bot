@@ -1,0 +1,28 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Установка необходимых зависимостей для psycopg2
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    libpq-dev \
+    gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Установка зависимостей
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копирование проекта
+COPY . .
+
+# Добавляем корневой каталог в PYTHONPATH
+ENV PYTHONPATH=/app
+
+# Запуск Telegram-бота с помощью модульного импорта
+CMD ["python", "-m", "djproject.bot.main"]
